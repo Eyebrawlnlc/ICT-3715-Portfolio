@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Amandla High — Locker Booking Main Page</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --accent:#0b74da;
+      --accent-2:#2e7d32;
+      --muted:#666;
+      --card:#ffffff;
+      --bg:#f4f7fb;
+      --danger:#c62828;
+      --radius:10px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    body{margin:0;background:var(--bg);color:#111}
+    header{background:linear-gradient(90deg,var(--accent),#4fa3ff);color:#fff;padding:18px 20px;border-bottom:4px solid rgba(0,0,0,0.05)}
+    header h1{margin:0;font-size:20px}
+    .container{max-width:980px;margin:28px auto;padding:18px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:0 6px 18px rgba(16,24,40,0.06);padding:16px;margin-bottom:16px}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
+    .btn{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+    .btn.secondary{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+    .btn.red{background:var(--danger)}
+    .muted{color:var(--muted);font-size:13px}
+    label{display:block;margin:8px 0 6px;font-weight:600;font-size:14px}
+    input[type=text],input[type=email],select,input[type=file]{width:100%;padding:8px;border-radius:6px;border:1px solid #ddd}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .log{font-family:monospace;background:#f1f5f9;padding:10px;border-radius:8px;max-height:170px;overflow:auto;font-size:13px}
+    .small{font-size:13px;color:var(--muted)}
+    .center{text-align:center}
+    .status{display:inline-block;padding:6px 8px;border-radius:8px;font-weight:600}
+    .status.available{background:#e8f5e9;color:var(--accent-2);border:1px solid #c8e6c9}
+    .status.booked{background:#fff3e0;color:#ff9800;border:1px solid #ffe0b2}
+    .status.suspended{background:#ffebee;color:var(--danger);border:1px solid #ffcdd2}
+    footer{padding:12px 20px;font-size:13px;color:#555;text-align:center}
+    .hint{font-size:13px;color:#444;margin-top:8px}
+    .success{background:#e8f5e9;border-left:4px solid #2e7d32;padding:8px;border-radius:6px}
+    .danger{background:#ffebee;border-left:4px solid #c62828;padding:8px;border-radius:6px}
+    @media(max-width:900px){.grid{grid-template-columns:1fr} .container{padding:10px}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Amandla High School — Locker Booking System (Demo)</h1>
+  </header>
+
+  <div class="container">
+
+    <div class="card center">
+      <h2>Quick Start</h2>
+      <p class="muted">Choose one of the actions below to begin the process (demo uses local browser storage).</p>
+      <div class="actions" style="justify-content:center;margin-top:12px">
+        <button class="btn" id="btnVisit">Visit Locker Booking Website</button>
+        <button class="btn secondary" id="btnCreateAccount">Create Account / Login</button>
+        <button class="btn" id="btnRegisterStudent">Register Student</button>
+        <button class="btn" id="btnApplyLocker">Apply for Locker (2026)</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Main column -->
+      <div>
+        <div class="card" id="panelAuth">
+          <h3>Create Account / Login</h3>
+          <p class="muted">Create a parent account or log in with existing email. (Demo password: <strong>parentpass</strong>)</p>
+
+          <div id="authForms">
+            <div id="registerForm">
+              <label for="regTitle">Title</label>
+              <select id="regTitle"><option>Mrs</option><option>Mr</option><option>Ms</option><option>Dr</option></select>
+
+              <label for="regFirst">First Name</label>
+              <input id="regFirst" type="text" placeholder="Parent first name">
+
+              <label for="regLast">Last Name</label>
+              <input id="regLast" type="text" placeholder="Parent last name">
+
+              <label for="regEmail">Email</label>
+              <input id="regEmail" type="email" placeholder="parent@example.com">
+
+              <label for="regPhone">Phone</label>
+              <input id="regPhone" type="text" placeholder="0821234567">
+
+              <div class="actions">
+                <button class="btn" id="createAccountBtn">Create Account</button>
+                <button class="btn secondary" id="showLoginBtn">Have an account? Login</button>
+              </div>
+              <p class="hint">Accounts saved locally (demo). Use the registered email + password "<strong>parentpass</strong>" to login.</p>
+            </div>
+
+            <div id="loginForm" style="display:none">
+              <label for="loginEmail">Email</label>
+              <input id="loginEmail" type="email" placeholder="parent@example.com">
+
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" type="text" placeholder="parentpass">
+
+              <label for="loginRole">Role</label>
+              <select id="loginRole"><option>Parent</option><option>Administrator</option></select>
+
+              <div class="actions">
+                <button class="btn" id="loginBtn">Login</button>
+                <button class="btn secondary" id="showRegBtn">Create Account</button>
+              </div>
+
+              <p class="hint">Demo admin credentials: <strong>admin@amandla.local / admin123</strong></p>
+            </div>
+          </div>
+
+          <div id="authMessage" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" id="panelStudent">
+          <h3>Register Student on the System</h3>
+          <p class="muted">Register a student and link to the logged-in parent.</p>
+
+          <div id="studentRegister">
+            <label for="studentFirst">Student First Name</label>
+            <input id="studentFirst" type="text">
+
+            <label for="studentLast">Student Last Name</label>
+            <input id="studentLast" type="text">
+
+            <label for="studentGrade">Grade</label>
+            <select id="studentGrade">
+              <option>Grade 8</option>
+              <option>Grade 9</option>
+              <option>Grade 10</option>
+              <option>Grade 11</option>
+              <option>Grade 12</option>
+              <option>Grade 1</option>
+            </select>
+
+            <div class="actions">
+              <button class="btn" id="saveStudentBtn">Register Student</button>
+              <button class="btn secondary" id="viewMyStudentsBtn">View My Students</button>
+            </div>
+
+            <div id="studentsList" style="margin-top:12px"></div>
+          </div>
+        </div>
+
+        <div class="card" id="panelApply">
+          <h3>Apply for Locker (2026)</h3>
+          <p class="muted">Apply for a locker on behalf of a registered student. System checks availability by grade.</p>
+
+          <label for="applyStudent">Select Student</label>
+          <select id="applyStudent"><option value="">-- No student selected --</option></select>
+
+          <label for="applyGrade">Student Grade (auto)</label>
+          <input id="applyGrade" type="text" disabled>
+
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <button class="btn" id="checkAvailBtn">Is Locker Available for Student’s Grade?</button>
+            <div id="availResult" class="muted" style="padding-left:8px"></div>
+          </div>
+
+          <div style="margin-top:12px">
+            <label for="selectLocker">If available, choose a locker</label>
+            <select id="selectLocker"><option value="">-- Select --</option></select>
+            <div class="actions" style="margin-top:10px">
+              <button class="btn" id="assignLockerBtn">Locker Assigned</button>
+              <button class="btn secondary" id="sendConfirmBtn">Send Confirmation Email</button>
+            </div>
+          </div>
+
+          <div id="applyLog" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" id="panelPayment">
+          <h3>Parent Replies with Proof of Payment</h3>
+          <p class="muted">Parent uploads proof (file). Admin then confirms payment.</p>
+
+          <label for="proofUpload">Upload proof of payment (image or PDF)</label>
+          <input id="proofUpload" type="file" accept="image/*,.pdf">
+
+          <div class="actions">
+            <button class="btn" id="uploadProofBtn">Upload Proof</button>
+            <button class="btn secondary" id="adminConfirmBtn">Admin Confirms Payment</button>
+          </div>
+
+          <div id="paymentResult" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" id="panelCancel">
+          <h3>Parent May Cancel Application Later (Optional)</h3>
+          <p class="muted">Parent can cancel a booking and a cancellation confirmation email is sent (simulated).</p>
+
+          <label for="cancelBooking">Select Booking to Cancel</label>
+          <select id="cancelBooking"><option value="">-- No booking selected --</option></select>
+
+          <div class="actions">
+            <button class="btn red" id="cancelBtn">Cancel Application</button>
+            <button class="btn secondary" id="sendCancelEmailBtn">Send Cancellation Confirmation Email</button>
+          </div>
+
+          <div id="cancelResult" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+      <!-- Right column (summary / admin quick actions) -->
+      <div>
+        <div class="card">
+          <h3>Session / Quick Actions</h3>
+          <p class="small">Status: <span id="sessionStatus">Not logged in</span></p>
+          <div style="margin-top:10px">
+            <button class="btn" id="btnViewAllLockers">View Lockers</button>
+            <button class="btn secondary" id="btnViewAllBookings">View Bookings</button>
+            <button class="btn secondary" id="btnGenerateReport">Generate Payment Report</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Lockers Snapshot</h3>
+          <div id="lockerSnapshot" class="log small">Loading...</div>
+        </div>
+
+        <div class="card">
+          <h3>System Log</h3>
+          <div id="systemLog" class="log"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+
+  </div>
+
+  <footer>
+    Amandla High School — Locker Booking System (Demo) • Save this file as <strong>index.html</strong> and open in your browser.
+  </footer>
+
+  <script>
+    /**************************************************************************
+     Demo front-end flow controller.
+     Data persists to localStorage under key 'amandla_demo'
+    ***************************************************************************/
+    const LS_KEY = 'amandla_demo_v1';
+    const logEl = document.getElementById('systemLog');
+    const lockerSnapshotEl = document.getElementById('lockerSnapshot');
+
+    function log(msg){
+      const ts = new Date().toLocaleString();
+      logEl.innerHTML = `${ts} — ${msg}\n` + logEl.innerHTML;
+      // also keep snapshot updated
+      renderLockerSnapshot();
+    }
+
+    // Initialize demo data (parents, students, lockers, bookings)
+    function initData(){
+      const saved = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+      if(saved) return saved;
+
+      // Default admin account (demo)
+      const data = {
+        currentUser: null, // {type: "parent"|"admin", email: "", parentId: n}
+        parents: [], // {parentId, title, first_name,last_name,email,phone}
+        students: [], // {studentId, first_name,last_name,grade,parentId}
+        lockers: [], // {lockerId, locker_number, status, location}
+        bookings: []  // {bookingId, parentId, studentId, lockerId, bookingDate, paymentStatus}
+      };
+
+      // create lockers 101..160
+      for(let i=101;i<=160;i++){
+        data.lockers.push({lockerId: i-100, locker_number: String(i), status: 'Available', location: 'Main Hall'});
+      }
+      // sample admin account (not stored in parents list)
+      data.admin = {email:'admin@amandla.local', password:'admin123'};
+
+      localStorage.setItem(LS_KEY, JSON.stringify(data));
+      return data;
+    }
+
+    let state = initData();
+
+    // Utilities for persistence
+    function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+    function newId(array, idKey){ return (array.length? Math.max(...array.map(x=>x[idKey])):0) + 1; }
+
+    // UI binding
+    document.getElementById('btnVisit').addEventListener('click', ()=>{ alert('You are on the locker booking website (demo) — use the forms below to proceed.')});
+    document.getElementById('btnCreateAccount').addEventListener('click', ()=>{ window.scrollTo({top:document.getElementById('panelAuth').offsetTop-20, behavior:'smooth'})});
+    document.getElementById('btnRegisterStudent').addEventListener('click', ()=>{ window.scrollTo({top:document.getElementById('panelStudent').offsetTop-20, behavior:'smooth'})});
+    document.getElementById('btnApplyLocker').addEventListener('click', ()=>{ window.scrollTo({top:document.getElementById('panelApply').offsetTop-20, behavior:'smooth'})});
+
+    // show/hide login/register
+    document.getElementById('showLoginBtn').addEventListener('click', ()=>{switchAuth('login')});
+    document.getElementById('showRegBtn').addEventListener('click', ()=>{switchAuth('reg')});
+    function switchAuth(mode){
+      document.getElementById('loginForm').style.display = mode==='login' ? 'block':'none';
+      document.getElementById('registerForm').style.display = mode==='reg' ? 'block':'none';
+      document.getElementById('authMessage').innerText = '';
+    }
+
+    // Create account
+    document.getElementById('createAccountBtn').addEventListener('click', ()=>{
+      const title = document.getElementById('regTitle').value.trim();
+      const first = document.getElementById('regFirst').value.trim();
+      const last = document.getElementById('regLast').value.trim();
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const phone = document.getElementById('regPhone').value.trim();
+      if(!first||!last||!email){ alert('Please fill required fields'); return; }
+      // ensure unique email
+      if(state.parents.some(p=>p.email===email)){ alert('Email already registered'); return; }
+      const id = newId(state.parents,'parentId');
+      state.parents.push({parentId:id, title, first_name:first, last_name:last, email, phone});
+      saveState();
+      document.getElementById('authMessage').innerHTML = `<div class="success">Account created for ${first} ${last}. Use password <strong>parentpass</strong> to login.</div>`;
+      log(`Parent account created: ${email} (id ${id})`);
+      populateStudentSelects();
+      // clear form
+      document.getElementById('regFirst').value='';document.getElementById('regLast').value='';document.getElementById('regEmail').value='';document.getElementById('regPhone').value='';
+    });
+
+    // Login
+    document.getElementById('loginBtn').addEventListener('click', ()=>{
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPassword').value;
+      const role = document.getElementById('loginRole').value;
+      if(role==='Administrator'){
+        if(email===state.admin.email && pass===state.admin.password){
+          state.currentUser = {type:'admin', email};
+          saveState();
+          document.getElementById('authMessage').innerHTML = `<div class="success">Administrator logged in</div>`;
+          document.getElementById('sessionStatus').innerText = `Admin (${email})`;
+          log(`Administrator logged in: ${email}`);
+        } else { document.getElementById('authMessage').innerHTML = `<div class="danger">Invalid admin credentials</div>`; }
+      } else {
+        const p = state.parents.find(x=>x.email===email);
+        if(p && pass==='parentpass'){
+          state.currentUser = {type:'parent', email, parentId:p.parentId};
+          saveState();
+          document.getElementById('authMessage').innerHTML = `<div class="success">Parent logged in: ${p.first_name} ${p.last_name}</div>`;
+          document.getElementById('sessionStatus').innerText = `Parent (${p.first_name} ${p.last_name})`;
+          log(`Parent logged in: ${email}`);
+        } else {
+          document.getElementById('authMessage').innerHTML = `<div class="danger">Invalid parent credentials</div>`;
+        }
+      }
+      populateStudentSelects(); populateCancelSelect(); renderBookings(); renderLockerSnapshot();
+    });
+
+    // Register student
+    document.getElementById('saveStudentBtn').addEventListener('click', ()=>{
+      if(!state.currentUser || state.currentUser.type!=='parent'){ alert('Please login as a parent to register a student'); return; }
+      const first = document.getElementById('studentFirst').value.trim();
+      const last = document.getElementById('studentLast').value.trim();
+      const grade = document.getElementById('studentGrade').value;
+      if(!first||!last){ alert('Please enter student name'); return; }
+      const id = newId(state.students,'studentId');
+      state.students.push({studentId:id, first_name:first, last_name:last, grade, parentId: state.currentUser.parentId});
+      saveState();
+      document.getElementById('studentFirst').value='';document.getElementById('studentLast').value='';
+      document.getElementById('studentsList').innerHTML = `<div class="success">Student registered: ${first} ${last} (${grade})</div>`;
+      log(`Student registered: ${first} ${last} (id ${id}) linked to parent ${state.currentUser.parentId}`);
+      populateStudentSelects();
+    });
+
+    // View my students
+    document.getElementById('viewMyStudentsBtn').addEventListener('click', ()=>{
+      if(!state.currentUser || state.currentUser.type!=='parent'){ alert('Login as parent first'); return; }
+      const list = state.students.filter(s=>s.parentId===state.currentUser.parentId);
+      const html = list.length ? '<ul>' + list.map(s=>`<li>${s.first_name} ${s.last_name} — ${s.grade}</li>`).join('') + '</ul>' : '<p class="muted">No students registered</p>';
+      document.getElementById('studentsList').innerHTML = html;
+    });
+
+    // Populate student select dropdowns
+    function populateStudentSelects(){
+      const sel = document.getElementById('applyStudent');
+      sel.innerHTML = '<option value="">-- No student selected --</option>';
+      state.students.forEach(s=>{
+        // only show parent's students if logged-in parent
+        if(state.currentUser && state.currentUser.type==='parent' && s.parentId===state.currentUser.parentId){
+          sel.innerHTML += `<option value="${s.studentId}">${s.first_name} ${s.last_name} (${s.grade})</option>`;
+        }
+      });
+      // also populate cancel select
+      populateCancelSelect();
+    }
+
+    // when student selected, update grade
+    document.getElementById('applyStudent').addEventListener('change', ()=>{
+      const sid = parseInt(document.getElementById('applyStudent').value || 0);
+      const s = state.students.find(x=>x.studentId===sid);
+      document.getElementById('applyGrade').value = s ? s.grade : '';
+    });
+
+    // Check availability by grade
+    document.getElementById('checkAvailBtn').addEventListener('click', ()=>{
+      const grade = document.getElementById('applyGrade').value;
+      if(!grade) { alert('Select a student first'); return; }
+      const totalLockers = state.lockers.length;
+      // For demo: determine capacity by grade (simple heuristic)
+      // We'll say each grade has 12 lockers (for demo), or compute actual booked for grade
+      const totalForGrade = Math.floor(totalLockers / 6); // simple split across 6 grade groups
+      // count booked lockers assigned to students in that grade
+      const bookedForGrade = state.bookings.filter(b=>{
+        const s = state.students.find(st=>st.studentId===b.studentId);
+        return s && s.grade===grade;
+      }).length;
+      const available = totalForGrade - bookedForGrade;
+      const resEl = document.getElementById('availResult');
+      if(available>0){
+        resEl.innerHTML = `<span class="status available">Available (${available} slots left for ${grade})</span>`;
+        populateLockerOptions();
+      } else {
+        resEl.innerHTML = `<span class="status suspended">No lockers available for ${grade}</span>`;
+        document.getElementById('selectLocker').innerHTML = '<option value="">-- None available --</option>';
+      }
+    });
+
+    // populate available locker options
+    function populateLockerOptions(){
+      const sel = document.getElementById('selectLocker');
+      sel.innerHTML = '<option value="">-- Select --</option>';
+      // show any available lockers
+      state.lockers.filter(l=>l.status==='Available').slice(0,50).forEach(l=>{
+        sel.innerHTML += `<option value="${l.lockerId}">${l.locker_number} — ${l.location}</option>`;
+      });
+    }
+
+    // Assign locker
+    document.getElementById('assignLockerBtn').addEventListener('click', ()=>{
+      if(!state.currentUser || state.currentUser.type!=='parent'){ alert('Please login as parent'); return; }
+      const sid = parseInt(document.getElementById('applyStudent').value || 0);
+      const lid = parseInt(document.getElementById('selectLocker').value || 0);
+      if(!sid || !lid){ alert('Select student and a locker'); return; }
+      // create booking
+      const bid = newId(state.bookings,'bookingId');
+      state.bookings.push({bookingId:bid,parentId:state.currentUser.parentId,studentId:sid,lockerId:lid,bookingDate:new Date().toISOString().slice(0,10), paymentStatus:'Unpaid'});
+      // update locker status
+      const locker = state.lockers.find(l=>l.lockerId===lid); if(locker) locker.status='Booked';
+      saveState();
+      document.getElementById('applyLog').innerHTML = `<div class="success">Locker ${locker.locker_number} assigned to student (booking id ${bid}).</div>`;
+      log(`Locker assigned: Locker ${locker.locker_number} -> student ${sid} (booking ${bid})`);
+      populateCancelSelect(); renderBookings(); renderLockerSnapshot();
+    });
+
+    // Send confirmation email (simulated)
+    document.getElementById('sendConfirmBtn').addEventListener('click', ()=>{
+      const brid = state.bookings.length ? state.bookings[state.bookings.length-1].bookingId : null;
+      if(!brid){ alert('No recent booking found to confirm'); return; }
+      const booking = state.bookings.find(b=>b.bookingId===brid);
+      const parent = state.parents.find(p=>p.parentId===booking.parentId);
+      // simulate sending email
+      document.getElementById('applyLog').innerHTML += `<div class="muted">Confirmation email sent to <strong>${parent.email}</strong> (simulated).</div>`;
+      log(`Confirmation email (simulated) sent to ${parent.email} for booking ${brid}`);
+    });
+
+    // Upload proof of payment (simulated by storing file name)
+    document.getElementById('uploadProofBtn').addEventListener('click', ()=>{
+      const f = document.getElementById('proofUpload').files[0];
+      if(!f) { alert('Choose a file to upload'); return; }
+      // Save proof as field in last booking for this parent (demo)
+      if(!state.currentUser || state.currentUser.type!=='parent'){ alert('Please login as parent'); return; }
+      // find most recent booking for this parent
+      const bookings = state.bookings.filter(b=>b.parentId===state.currentUser.parentId).sort((a,b)=>b.bookingId-a.bookingId);
+      if(bookings.length===0){ alert('No booking found for this parent'); return; }
+      bookings[0].proofFile = f.name;
+      saveState();
+      document.getElementById('paymentResult').innerHTML = `<div class="success">Proof uploaded: ${f.name} (simulated)</div>`;
+      log(`Proof uploaded by parent ${state.currentUser.email}: ${f.name} for booking ${bookings[0].bookingId}`);
+      populateCancelSelect();
+    });
+
+    // Admin confirms payment
+    document.getElementById('adminConfirmBtn').addEventListener('click', ()=>{
+      if(!state.currentUser || state.currentUser.type!=='admin'){ alert('Please login as admin to confirm payments'); return; }
+      // For demo, admin confirms most recent booking with proof
+      const withProof = state.bookings.find(b=>b.proofFile && b.paymentStatus==='Unpaid');
+      if(!withProof){ alert('No uploaded proofs awaiting confirmation'); return; }
+      withProof.paymentStatus='Paid';
+      saveState();
+      document.getElementById('paymentResult').innerHTML = `<div class="success">Payment confirmed for booking ${withProof.bookingId} (simulated)</div>`;
+      log(`Admin confirmed payment for booking ${withProof.bookingId}`);
+      renderBookings(); renderLockerSnapshot();
+    });
+
+    // Cancel booking
+    function populateCancelSelect(){
+      const sel = document.getElementById('cancelBooking');
+      sel.innerHTML = '<option value="">-- No booking selected --</option>';
+      state.bookings.forEach(b=>{
+        const s = state.students.find(x=>x.studentId===b.studentId);
+        const p = state.parents.find(x=>x.parentId===b.parentId);
+        sel.innerHTML += `<option value="${b.bookingId}">Booking ${b.bookingId}: ${s.first_name} ${s.last_name} — ${p.first_name} ${p.last_name} (${b.paymentStatus})</option>`;
+      });
+    }
+    populateCancelSelect();
+
+    document.getElementById('cancelBtn').addEventListener('click', ()=>{
+      if(!state.currentUser || state.currentUser.type!=='parent'){ alert('Login as parent to cancel'); return; }
+      const bid = parseInt(document.getElementById('cancelBooking').value || 0);
+      if(!bid){ alert('Select a booking to cancel'); return; }
+      const idx = state.bookings.findIndex(b=>b.bookingId===bid);
+      if(idx===-1){ alert('Booking not found'); return; }
+      const b = state.bookings[idx];
+      // only allow parent who owns booking to cancel
+      if(b.parentId !== state.currentUser.parentId){ alert('You may only cancel your own bookings'); return; }
+      // free locker
+      const locker = state.lockers.find(l=>l.lockerId===b.lockerId);
+      if(locker) locker.status='Available';
+      state.bookings.splice(idx,1);
+      saveState();
+      document.getElementById('cancelResult').innerHTML = `<div class="success">Booking ${bid} cancelled. Locker released.</div>`;
+      log(`Parent ${state.currentUser.email} cancelled booking ${bid}`);
+      populateCancelSelect(); renderBookings(); renderLockerSnapshot();
+    });
+
+    // Send cancellation confirmation email (simulated)
+    document.getElementById('sendCancelEmailBtn').addEventListener('click', ()=>{
+      const bid = parseInt(document.getElementById('cancelBooking').value || 0);
+      if(!bid){ alert('Select a booking to send cancellation email for'); return; }
+      const b = state.bookings.find(x=>x.bookingId===bid);
+      const parent = state.parents.find(p=>p.parentId=== (b? b.parentId : null));
+      document.getElementById('cancelResult').innerHTML = `<div class="muted">Cancellation confirmation email sent to ${parent? parent.email: 'parent@example.com'} (simulated).</div>`;
+      log(`Cancellation confirmation (simulated) sent for booking ${bid}`);
+    });
+
+    // View lockers
+    document.getElementById('btnViewAllLockers').addEventListener('click', ()=>{
+      let html = '<table style="width:100%;border-collapse:collapse"><tr><th style="text-align:left">Locker#</th><th>Status</th><th>Location</th></tr>';
+      state.lockers.forEach(l=>{
+        html += `<tr><td>${l.locker_number}</td><td>${l.status}</td><td>${l.location||''}</td></tr>`;
+      });
+      html += '</table>';
+      alert('Lockers snapshot (see right column for log).');
+      log('Admin viewed the full locker list');
+    });
+
+    // View bookings render
+    function renderBookings(){
+      // right now just populate cancel select and system log includes bookings
+      // Additionally you can render a bookings table on demand
+    }
+
+    document.getElementById('btnViewAllBookings').addEventListener('click', ()=>{
+      let html = '';
+      if(state.bookings.length===0) html = '<p class="muted">No bookings yet</p>';
+      else {
+        html = '<table style="width:100%;border-collapse:collapse"><tr><th>Booking</th><th>Student</th><th>Parent</th><th>Locker</th><th>Payment</th></tr>';
+        state.bookings.forEach(b=>{
+          const s = state.students.find(st=>st.studentId===b.studentId);
+          const p = state.parents.find(pt=>pt.parentId===b.parentId);
+          const l = state.lockers.find(x=>x.lockerId===b.lockerId);
+          html += `<tr><td>${b.bookingId}</td><td>${s? s.first_name+' '+s.last_name:''}</td><td>${p? p.first_name+' '+p.last_name:''}</td><td>${l? l.locker_number:''}</td><td>${b.paymentStatus}</td></tr>`;
+        });
+        html += '</table>';
+      }
+      alert('Bookings preview printed to system log.');
+      log('Admin viewed all bookings');
+    });
+
+    // Generate payment report (simple)
+    document.getElementById('btnGenerateReport').addEventListener('click', ()=>{
+      if(!state.currentUser || state.currentUser.type!=='admin'){ alert('Login as admin to generate reports'); return; }
+      const total = state.bookings.length;
+      const paid = state.bookings.filter(b=>b.paymentStatus==='Paid').length;
+      const unpaid = total-paid;
+      alert(`Payment Report (simulated):\nTotal bookings: ${total}\nPaid: ${paid}\nUnpaid: ${unpaid}`);
+      log('Admin generated payment report');
+    });
+
+    // render lockers snapshot on side panel
+    function renderLockerSnapshot(){
+      const total = state.lockers.length;
+      const booked = state.lockers.filter(l=>l.status==='Booked').length;
+      const available = state.lockers.filter(l=>l.status==='Available').length;
+      const suspended = state.lockers.filter(l=>l.status==='Suspended').length;
+      lockerSnapshotEl.innerHTML = `Total: ${total}\nBooked: ${booked}\nAvailable: ${available}\nSuspended: ${suspended}`;
+    }
+    renderLockerSnapshot();
+
+    // initial populate selects
+    populateStudentSelects();
+
+    // add any previously created sample parents/students? none by default
+    log('Demo initialized. Ready.');
+  </script>
+</body>
+</html>
