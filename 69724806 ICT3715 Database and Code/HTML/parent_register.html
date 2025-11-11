@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Amandla High School — Parent Registration</title>
+  <style>
+    :root{
+      --accent:#0B5FFF;
+      --accent-2:#2E7D32;
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --muted:#666;
+      --danger:#c62828;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    body{margin:0;background:var(--bg);color:#111;}
+    .container{max-width:900px;margin:28px auto;padding:18px;}
+    .card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 6px 18px rgba(20,30,50,0.06);}
+    h1{margin:0 0 8px;font-size:20px;}
+    p.lead{margin:0 0 18px;color:var(--muted);}
+    form .row{display:flex;gap:12px;flex-wrap:wrap;}
+    label{font-size:13px;color:#222;margin-bottom:6px;display:block;}
+    input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select{
+      width:100%;padding:10px;border:1px solid #e2e6ef;border-radius:6px;font-size:14px;
+    }
+    .col{flex:1 1 220px;min-width:180px;}
+    .full{flex:1 1 100%;}
+    .actions{display:flex;gap:12px;align-items:center;margin-top:14px;}
+    button{padding:10px 14px;border-radius:8px;border:0;cursor:pointer;font-weight:600;}
+    button.primary{background:var(--accent);color:white;}
+    button.ghost{background:transparent;border:1px solid #ddd;color:#333;}
+    .note{font-size:13px;color:var(--muted);margin-top:8px;}
+    .error{color:var(--danger);font-size:13px;margin-top:6px;}
+    .success{color:var(--accent-2);font-weight:700;margin-top:8px;}
+    @media (max-width:640px){
+      .row{flex-direction:column;}
+    }
+    .preview{background:#f4f8ff;border:1px dashed #d6e3ff;padding:12px;border-radius:6px;margin-top:12px;font-size:14px;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Parent Registration — Amandla High School</h1>
+      <p class="lead">Create a secure parent account to manage your child's locker application and payments.</p>
+
+      <form id="regForm" novalidate>
+        <div class="row">
+          <div class="col">
+            <label for="title">Title</label>
+            <select id="title" required>
+              <option value="">Select title</option>
+              <option>Mr</option>
+              <option>Mrs</option>
+              <option>Ms</option>
+              <option>Dr</option>
+            </select>
+            <div id="titleErr" class="error" style="display:none"></div>
+          </div>
+
+          <div class="col">
+            <label for="idnumber">Parent ID Number</label>
+            <input id="idnumber" type="text" inputmode="numeric" placeholder="e.g. 3018701182" required />
+            <div id="idErr" class="error" style="display:none"></div>
+          </div>
+
+          <div class="col">
+            <label for="email">Parent Email</label>
+            <input id="email" type="email" placeholder="parent@example.com" required />
+            <div id="emailErr" class="error" style="display:none"></div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <div class="col">
+            <label for="fname">Parent First Name</label>
+            <input id="fname" type="text" placeholder="Mary" required />
+            <div id="fnameErr" class="error" style="display:none"></div>
+          </div>
+
+          <div class="col">
+            <label for="lname">Parent Last Name</label>
+            <input id="lname" type="text" placeholder="Johnson" required />
+            <div id="lnameErr" class="error" style="display:none"></div>
+          </div>
+
+          <div class="col">
+            <label for="phone">Phone Number</label>
+            <input id="phone" type="tel" inputmode="tel" placeholder="082 345 6789" required />
+            <div id="phoneErr" class="error" style="display:none"></div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <div class="full">
+            <label for="address">Home Address</label>
+            <input id="address" type="text" placeholder="456 Oak Ave, Pretoria" required />
+            <div id="addrErr" class="error" style="display:none"></div>
+          </div>
+        </div>
+
+        <hr style="margin:16px 0">
+
+        <h2 style="font-size:16px;margin-bottom:8px">Student Details</h2>
+
+        <div class="row">
+          <div class="col">
+            <label for="schoolnum">Student School Number</label>
+            <input id="schoolnum" type="text" placeholder="e.g. 357874" required />
+            <div id="snErr" class="error" style="display:none"></div>
+          </div>
+
+          <div class="col">
+            <label for="sname">Student First Name</label>
+            <input id="sname" type="text" placeholder="Liam" required />
+            <div id="sfnErr" class="error" style="display:none"></div>
+          </div>
+
+          <div class="col">
+            <label for="ssurname">Student Last Name</label>
+            <input id="ssurname" type="text" placeholder="Johnson" required />
+            <div id="slnErr" class="error" style="display:none"></div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <div class="col">
+            <label for="grade">Grade</label>
+            <select id="grade" required>
+              <option value="">Select grade</option>
+              <option>Grade 8</option>
+              <option>Grade 9</option>
+              <option>Grade 10</option>
+              <option>Grade 11</option>
+              <option>Grade 12</option>
+            </select>
+            <div id="gradeErr" class="error" style="display:none"></div>
+          </div>
+
+          <div class="col">
+            <label for="password">Create Password</label>
+            <input id="password" type="password" placeholder="At least 8 characters" required />
+            <div id="pwErr" class="error" style="display:none"></div>
+          </div>
+
+          <div class="col">
+            <label for="confirm">Confirm Password</label>
+            <input id="confirm" type="password" placeholder="Confirm password" required />
+            <div id="confirmErr" class="error" style="display:none"></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="primary" id="submitBtn">Create Account</button>
+          <button type="button" class="ghost" id="previewBtn">Preview</button>
+          <div style="flex:1"></div>
+        </div>
+
+        <p class="note">By creating an account you agree to the school's terms for using the locker booking system.</p>
+
+        <div id="formMessage" role="status"></div>
+      </form>
+
+      <div id="preview" class="preview" style="display:none"></div>
+    </div>
+  </div>
+
+  <script>
+    // Helper functions
+    const el = id => document.getElementById(id);
+    const showErr = (id, msg) => { el(id).style.display = 'block'; el(id).textContent = msg; }
+    const hideErr = (id) => { el(id).style.display = 'none'; el(id).textContent = ''; }
+
+    function validateForm() {
+      let ok = true;
+      // reset errors
+      ['titleErr','idErr','emailErr','fnameErr','lnameErr','phoneErr','addrErr','snErr','sfnErr','slnErr','gradeErr','pwErr','confirmErr'].forEach(hideErr);
+      el('formMessage').textContent = '';
+
+      if (!el('title').value) { showErr('titleErr','Please select a title'); ok = false; }
+      if (!el('idnumber').value.trim()) { showErr('idErr','Enter ID number'); ok = false; }
+      if (!/^\S+@\S+\.\S+$/.test(el('email').value)) { showErr('emailErr','Enter a valid email'); ok = false; }
+      if (!el('fname').value.trim()) { showErr('fnameErr','Enter first name'); ok = false; }
+      if (!el('lname').value.trim()) { showErr('lnameErr','Enter last name'); ok = false; }
+      if (!el('phone').value.trim()) { showErr('phoneErr','Enter phone number'); ok = false; }
+      if (!el('address').value.trim()) { showErr('addrErr','Enter home address'); ok = false; }
+      if (!el('schoolnum').value.trim()) { showErr('snErr','Enter school number'); ok = false; }
+      if (!el('sname').value.trim()) { showErr('sfnErr','Enter student first name'); ok = false; }
+      if (!el('ssurname').value.trim()) { showErr('slnErr','Enter student last name'); ok = false; }
+      if (!el('grade').value) { showErr('gradeErr','Select a grade'); ok = false; }
+
+      const pw = el('password').value;
+      const conf = el('confirm').value;
+      if (pw.length < 8) { showErr('pwErr','Password must be at least 8 characters'); ok = false; }
+      if (pw !== conf) { showErr('confirmErr','Passwords do not match'); ok = false; }
+
+      return ok;
+    }
+
+    function buildPayload() {
+      return {
+        title: el('title').value,
+        id_number: el('idnumber').value.trim(),
+        parent_first_name: el('fname').value.trim(),
+        parent_last_name: el('lname').value.trim(),
+        email: el('email').value.trim().toLowerCase(),
+        address: el('address').value.trim(),
+        phone: el('phone').value.trim(),
+        student_school_number: el('schoolnum').value.trim(),
+        student_first_name: el('sname').value.trim(),
+        student_last_name: el('ssurname').value.trim(),
+        grade: el('grade').value,
+        password: el('password').value
+      };
+    }
+
+    // Preview button
+    el('previewBtn').addEventListener('click', () => {
+      if (!validateForm()) {
+        el('formMessage').innerHTML = '<span class="error">Fix the highlighted errors before previewing.</span>';
+        el('preview').style.display = 'none';
+        return;
+      }
+      const p = buildPayload();
+      el('preview').innerHTML = `
+        <strong>Preview</strong><br>
+        <strong>Parent:</strong> ${p.title} ${p.parent_first_name} ${p.parent_last_name} (${p.email})<br>
+        <strong>Phone:</strong> ${p.phone} — <strong>Address:</strong> ${p.address}<br>
+        <strong>Student:</strong> ${p.student_first_name} ${p.student_last_name} — ${p.grade} (ID: ${p.student_school_number})<br>
+        <em>When you click "Create Account" the data will be sent to the server (or saved locally for demo).</em>
+      `;
+      el('preview').style.display = 'block';
+      el('formMessage').textContent = '';
+    });
+
+    // Submit button
+    el('submitBtn').addEventListener('click', async () => {
+      el('formMessage').textContent = '';
+      if (!validateForm()) {
+        el('formMessage').innerHTML = '<span class="error">Please fix errors above.</span>';
+        return;
+      }
+      const payload = buildPayload();
+
+      // Try to POST to backend endpoint. If it fails (no backend), save to localStorage as demo.
+      const apiUrl = '/api/register'; // CHANGE this to your real API endpoint
+      try {
+        const resp = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (resp.ok) {
+          el('formMessage').innerHTML = '<div class="success">Account created successfully. Check your email for confirmation.</div>';
+          document.getElementById('regForm').reset();
+          el('preview').style.display = 'none';
+          return;
+        } else {
+          // show server error message if possible
+          let txt = await resp.text();
+          el('formMessage').innerHTML = `<span class="error">Server error: ${txt || resp.statusText}</span>`;
+          return;
+        }
+      } catch (err) {
+        // No backend — save to localStorage for demo purposes
+        const demoKey = 'amandla_parent_registrations';
+        const existing = JSON.parse(localStorage.getItem(demoKey) || '[]');
+        existing.push({...payload, created_at: new Date().toISOString()});
+        localStorage.setItem(demoKey, JSON.stringify(existing));
+        el('formMessage').innerHTML = '<div class="success">Demo: account saved locally. (No backend available)</div>';
+        document.getElementById('regForm').reset();
+        el('preview').style.display = 'none';
+      }
+    });
+
+    // Optional: Pre-fill fields using example from dataset (helpful for demo/testing)
+    (function autofillDemo(){
+      const params = new URLSearchParams(location.search);
+      if (params.get('demo') === '1') {
+        el('title').value = 'Mrs';
+        el('idnumber').value = '3018701182';
+        el('fname').value = 'Mary';
+        el('lname').value = 'Johnson';
+        el('email').value = 'mary.j@gmail.com';
+        el('address').value = '456 Oak Ave';
+        el('phone').value = '832345678';
+        el('schoolnum').value = '357874';
+        el('sname').value = 'Liam';
+        el('ssurname').value = 'Johnson';
+        el('grade').value = 'Grade 8';
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -400,3 +400,38 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- =============================================
+-- MIS REPORTS SECTION
+-- =============================================
+
+-- REPORT 1: Locker Usage by Grade Report
+SELECT 
+    s.grade AS Grade,
+    COUNT(b.booking_id) AS LockersBooked,
+    (
+        SELECT COUNT(*) 
+        FROM lockers l
+    ) AS TotalLockers,
+    ROUND(
+        (COUNT(b.booking_id) * 100.0 / (SELECT COUNT(*) FROM lockers l)),
+        2
+    ) AS PercentageUsed
+FROM 
+    bookings b
+JOIN 
+    students s ON b.student_id = s.student_id
+WHERE 
+    s.grade IN ('Grade 8', 'Grade 11')
+    AND b.payment_status = 'Paid'
+GROUP BY 
+    s.grade;
+
+-- REPORT 2: Locker Booking Summary (Jan–Jun 2026)
+SELECT 
+    COUNT(*) AS TotalLockersBooked
+FROM 
+    bookings
+WHERE 
+    booking_date BETWEEN '2026-01-01' AND '2026-06-30'
+    AND payment_status = 'Paid';
